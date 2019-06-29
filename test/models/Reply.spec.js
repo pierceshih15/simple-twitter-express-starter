@@ -1,8 +1,8 @@
 process.env.NODE_ENV = 'test'
 
-var chai = require('chai');
-var sinon = require('sinon');
-chai.use(require('sinon-chai'));
+var chai = require('chai')
+var sinon = require('sinon')
+chai.use(require('sinon-chai'))
 
 const { expect } = require('chai')
 const {
@@ -17,7 +17,6 @@ const db = require('../../models')
 const ReplyModel = require('../../models/reply')
 
 describe('# Reply Model', () => {
-  
   before(done => {
     done()
   })
@@ -27,8 +26,7 @@ describe('# Reply Model', () => {
   checkModelName(Reply)('Reply')
 
   context('properties', () => {
-    ;[
-    ].forEach(checkPropertyExists(like))
+    ;[].forEach(checkPropertyExists(like))
   })
 
   context('associations', () => {
@@ -39,48 +37,46 @@ describe('# Reply Model', () => {
       Reply.associate({ Tweet })
     })
 
-    it('should belong to user', (done) => {
+    it('should belong to user', done => {
       expect(Reply.belongsTo).to.have.been.calledWith(User)
       done()
     })
-    it('should belong to tweet', (done) => {
+    it('should belong to tweet', done => {
       expect(Reply.belongsTo).to.have.been.calledWith(Tweet)
       done()
     })
   })
 
   context('action', () => {
-
     let data = null
 
-    it('create', (done) => {
-      db.Reply.create({}).then((reply) => {   
+    it('create', done => {
+      db.Reply.create({}).then(reply => {
         data = reply
         done()
       })
     })
-    it('read', (done) => {
-      db.Reply.findByPk(data.id).then((reply) => {  
+    it('read', done => {
+      db.Reply.findByPk(data.id).then(reply => {
         expect(data.id).to.be.equal(reply.id)
-          done()
-        })
+        done()
+      })
     })
-    it('update', (done) => {
-      db.Reply.update({}, { where: { id: data.id }}).then(() => {
-        db.Reply.findByPk(data.id).then((reply) => { 
-          expect(data.updatedAt).to.be.not.equal(reply.updatedAt) 
+    it('update', done => {
+      db.Reply.update({}, { where: { id: data.id } }).then(() => {
+        db.Reply.findByPk(data.id).then(reply => {
+          expect(data.updatedAt).to.be.not.equal(reply.updatedAt)
           done()
         })
       })
     })
-    it('delete', (done) => {
-      db.Reply.destroy({ where: { id: data.id }}).then(() => {
-        db.Reply.findByPk(data.id).then((reply) => { 
-          expect(reply).to.be.equal(null) 
+    it('delete', done => {
+      db.Reply.destroy({ where: { id: data.id } }).then(() => {
+        db.Reply.findByPk(data.id).then(reply => {
+          expect(reply).to.be.equal(null)
           done()
         })
       })
     })
   })
-
 })
