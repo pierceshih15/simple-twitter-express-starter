@@ -25,7 +25,10 @@ const userController = {
           User.create({
             name: req.body.name,
             email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
+            password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null),
+            avatar: 'https://img.icons8.com/ios/100/000000/guest-male-filled.png',
+            introduction: 'Hello, I am a slacker',
+            role: 'user'
           }).then(user => {
             req.flash('success_messages', '成功註冊帳號！')
             return res.redirect('/signin')
