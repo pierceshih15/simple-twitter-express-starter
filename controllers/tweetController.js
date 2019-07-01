@@ -7,7 +7,8 @@ const Reply = db.Reply
 const tweetController = {
   getTweets: async (req, res) => {
     const tweets = await Tweet.findAll({
-      include: [User, Like, Reply]
+      include: [User, Like, Reply],
+      order: [['createdAt', 'DESC']]
     })
     const users = await User.findAll({
       include: [{ model: User, as: 'Followers' }]
@@ -30,6 +31,15 @@ const tweetController = {
       return b.FollowerCount - a.FollowerCount
     })
     res.render('tweets', { allTweets, topTenUsers })
+  },
+
+  postTweet: async (req, res) => {
+    await Tweet.create({
+      UserId: req.user.id,
+      description: req.body.description
+    })
+
+    res.redirect('/tweets')
   }
 }
 
