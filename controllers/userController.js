@@ -69,9 +69,47 @@ const userController = {
       ]
     }).then(user => {
       const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
-
-      return res.render('users/profile', { profile: user, isFollowed })
+      let tweetArray = user.Tweets.sort((a, b) => b.createdAt - a.createdAt)
+      return res.render('users/profile', { profile: user, isFollowed, tweetArray })
     })
+  },
+
+  editUser: (req, res) => {
+    return User.findByPk(req.params.id).then(user => {
+      return res.render('users/edit', { user })
+    })
+  },
+
+  putUser: (req, res) => {
+    if (Number(req.params.id) !== req.user.id) {
+      return res.redirect(`/users/${req.user.id}/tweets`)
+    }
+
+    const { file } = req
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        return User.findByPk(req.params.id).then(user => {
+          user
+            .update({
+              name: req.body.name,
+              introduction: req.body.introduction,
+              avatar: file ? img.data.link : user.avatar
+            })
+            .then(user => {
+              req.flash('success_messages', `用戶 ${user.name} 資料更新成功！`)
+              res.redirect(`/users/${req.params.id}/tweets`)
+            })
+        })
+      })
+    } else {
+      return User.findByPk(req.params.id).then(user => {
+        user.update({ name: req.body.name, introduction: req.body.introduction }).then(user => {
+          req.flash('success_messages', `用戶 ${user.name} 資料更新成功！`)
+          res.redirect(`/users/${req.params.id}/tweets`)
+        })
+      })
+    }
   }
 }
 
