@@ -1,10 +1,6 @@
 const bcrypt = require('bcrypt-nodejs')
 const db = require('../models')
-const User = db.User
-const Tweet = db.Tweet
-const Reply = db.Reply
-const Like = db.Like
-const Followship = db.Followship
+const { User, Tweet, Reply, Like, Followship } = db
 const Sequelize = require('sequelize')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
@@ -70,13 +66,13 @@ const userController = {
     }).then(user => {
       const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
       let tweetArray = user.Tweets.sort((a, b) => b.createdAt - a.createdAt)
-      return res.render('users/profile', { profile: user, isFollowed, tweetArray })
+      return res.render('profile', { profile: user, isFollowed, tweetArray })
     })
   },
 
   editUser: (req, res) => {
     return User.findByPk(req.params.id).then(user => {
-      return res.render('users/edit', { user })
+      return res.render('edit', { user })
     })
   },
 
