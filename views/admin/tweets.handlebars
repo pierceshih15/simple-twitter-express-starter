@@ -1,1 +1,80 @@
-<h1>admin</h1>
+<div class="row mt-5">
+  <div class="col-12 col-md-10 mx-auto">
+    <h1>Twitter後台</h1>
+    <a href="/admin/Tweets">Tweets</a>
+    |
+    <a href="/admin/users">Users</a>
+  </div>
+</div>
+
+{{!-- 推特內容 --}}
+{{#each tweets}}
+<div class="row mt-3">
+  <div class="col-12 col-md-10 mx-auto">
+    <div class="card">
+      <div class="card-body p-3" style="min-height:150px">
+        <div class="row">
+          {{!-- 使用者照片 --}}
+          <div class="col-4 col-md-2">
+            <img src="{{this.User.avatar}}" alt="使用者照片" class="rounded m-auto" style="min-height:100px,min-width:100px">
+          </div>
+          {{!-- 推特內容 --}}
+          <div class="col-8 col-md-10">
+            <div class="row col-md-12">
+              <div class="col-8 col-md-10">
+                <a href="/users/{{this.User.id}}/tweets">
+                  <h3 class="text-primary font-weight-bolder ">@{{this.User.name}}</h3>
+                </a>
+              </div>
+              {{!-- 刪除按鈕 --}}
+              <div class="col-4 col-md-2">
+                <form action="/admin/tweets/{{this.id}}?_method=DELETE" method="POST">
+                  <button type="submit" class="btn-sm btn-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+            <div class="row col-12 col-md-11 mt-3">
+              <div class="col-12 col-md-11">
+                <div class="">{{this.description}}</div>
+              </div>
+            </div>
+            <div class="row col-12 col-md-12 mt-3">
+              <a class="col-6 col-md-3 text-info font-weight-bolder" href="/tweets/:id/replies">
+                Reply(2)
+              </a>
+              <a class="col-6 col-md-3 text-danger font-weight-bolder " href="/tweets/:id/replies">
+                Like(2)
+              </a>
+              <div class="col-12 col-md-6 text-secondary text-muted">{{momentCreateAt this.createdAt}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{/each}}
+<div class="mt-4">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a class="page-link" href="/admin/tweets?page={{prev}}" aria-label="Previous">
+          <span aria-hidden="true">«</span>
+        </a>
+      </li>
+      {{#each totalPage}}
+      {{#ifCond this ../page}}
+      <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+      {{else}}
+      <li class="page-item"><a class="page-link" href="/admin/tweets?page={{this}}">{{this}}</a></li>
+      {{/ifCond}}
+      {{/each}}
+      <a class="page-link" href="/admin/tweets?page={{next}}" aria-label="Next">
+        <span aria-hidden="true">»</span>
+      </a>
+      </li>
+    </ul>
+  </nav>
+</div>
