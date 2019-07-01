@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt-nodejs')
 const db = require('../models')
 const User = db.User
+const Tweet = db.Tweet
+const Reply = db.Reply
+const Like = db.Like
+const Followship = db.Followship
 const Sequelize = require('sequelize')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
@@ -53,6 +57,21 @@ const userController = {
     req.flash('success_messages', '登出成功！')
     req.logout()
     res.redirect('/signin')
+  },
+
+  getUser: (req, res) => {
+    return User.findByPk(req.params.id, {
+      include: [
+        { model: Tweet, include: [User, Reply, Like] },
+        { model: Tweet, as: 'LikedTweets' },
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' }
+      ]
+    }).then(user => {
+      const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
+
+      return res.render('users/profile', { profile: user, isFollowed })
+    })
   }
 }
 
