@@ -1,1 +1,72 @@
-<h1>tweets</h1>
+<div class="row">
+  <div class="col-md-8 col-12">
+    <form action="/tweets" method="post" class="mb-3 text-right">
+      <div class="form-group mb-1 text-left">
+        <textarea class="form-control" id="tweet-textarea" rows="3" placeholder="發生了什麼有趣的事呢？"></textarea>
+      </div>
+      <div>
+        <div class="float-left text-success" id="tweet-valid-feedback"></div>
+        <button type="submit" class="btn btn-primary disabled" id="tweet-btn" style="cursor: no-drop">Tweet</button>
+      </div>
+    </form>
+    {{#each allTweets}}
+    <div class="card w-100 mt-1 p-2">
+      <div class="row">
+        <div class="col-3">
+          <div class="my-1 mx-auto"
+            style="background-image: url({{this.User.avatar}});;border-radius: 50%; background-repeat: no-repeat;background-position: center;background-size: cover;width: 5em; height: 5em">
+          </div>
+        </div>
+        <div class="col-9">
+          <a href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
+          <span class="text-primary float-right">--- {{#moment this.createdAt}}{{/moment}}</span>
+          <p>{{this.description}}</p>
+          <a href="/tweets/{{this.id}}/replies" class="text-primary">Reply({{this.numOfReply}})</a>
+          <span class="text-danger pl-3">Like({{this.numOfLike}})</span>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  <div class="col-md-4 col-12">
+    <h3>Popular</h3>
+  </div>
+</div>
+
+<script>
+  const tweetTextarea = document.querySelector('#tweet-textarea')
+  const tweetBtn = document.querySelector('#tweet-btn')
+  const tweetValidFeedback = document.querySelector('#tweet-valid-feedback')
+  let characterLength = 0
+  let leftCharacterLength = 140
+
+  tweetBtn.addEventListener('click', e => {
+    if (characterLength > 0 && leftCharacterLength >= 0) {
+      return
+    } else {
+      e.preventDefault()
+    }
+  })
+
+  tweetTextarea.addEventListener('input', e => {
+    characterLength = tweetTextarea.value.length
+    leftCharacterLength = 140 - characterLength
+    tweetValidFeedback.innerText = `剩餘字數 ${leftCharacterLength}`
+
+    if (characterLength > 0 && leftCharacterLength >= 0) {
+      tweetBtn.classList.remove('disabled')
+      tweetBtn.style.cursor = ''
+    } else {
+      tweetBtn.classList.add('disabled')
+      tweetBtn.style.cursor = 'no-drop'
+    }
+
+    if (leftCharacterLength < 0) {
+      tweetValidFeedback.classList.remove('text-success')
+      tweetValidFeedback.classList.add('text-danger')
+    } else {
+      tweetValidFeedback.classList.remove('text-danger')
+      tweetValidFeedback.classList.add('text-success')
+    }
+  })
+</script>
