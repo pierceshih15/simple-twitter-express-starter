@@ -30,6 +30,31 @@
   </div>
   <div class="col-md-4 col-12">
     <h3>Popular</h3>
+    {{#each topTenUsers}}
+    <div class="card w-100 mt-1 p-2">
+      <div class="row">
+        <div class="col-4">
+          <div class="my-1 mx-auto"
+            style="background-image: url({{this.avatar}});;border-radius: 50%; background-repeat: no-repeat;background-position: center;background-size: cover;width: 5em; height: 5em">
+          </div>
+        </div>
+        <div class="col-8">
+          <a href="/users/{{this.id}}/tweets">@{{this.name}}</a>
+          <small class="float-right text-secondary">{{this.FollowerCount}} 位粉絲</small>
+          <p>{{this.introduction}}</p>
+          <div class="w-100 text-right">
+            {{#if this.isFollowed }}
+            <form action="/folloships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
+              <button type="submit" class="btn btn-danger">取消追蹤</button></form>
+            {{else}}
+            <form action="/folloships/{{this.id}}" method="POST" style="display: contents;">
+              <button type="submit" class="btn btn-primary">追蹤</button></form>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
   </div>
 </div>
 
