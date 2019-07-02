@@ -6,6 +6,9 @@ const Reply = db.Reply
 
 const tweetController = {
   getTweets: async (req, res) => {
+    const tweetValue = req.session.tweetValue
+    req.session.tweetValue = ''
+
     const tweets = await Tweet.findAll({
       include: [User, Like, Reply],
       order: [['createdAt', 'DESC']]
@@ -30,16 +33,26 @@ const tweetController = {
     topTenUsers = topTenUsers.sort((a, b) => {
       return b.FollowerCount - a.FollowerCount
     })
-    res.render('tweets', { allTweets, topTenUsers })
+    res.render('tweets', { allTweets, topTenUsers, tweetValue })
   },
 
   postTweet: async (req, res) => {
-    await Tweet.create({
-      UserId: req.user.id,
-      description: req.body.description
-    })
+    const tweetValue = req.body.description
+    if (tweetValue === '') {
+      req.flash('error_messages', '請確認填寫內容喔！')
+      res.redirect('/tweets')
+    } else if (tweetValue.length > 140) {
+      req.flash('error_messages', '字數超過 140 字限制，請縮減~')
+      req.session.tweetValue = req.body.description
+      res.redirect('/tweets')
+    } else {
+      await Tweet.create({
+        UserId: req.user.id,
+        description: req.body.description
+      })
 
-    res.redirect('/tweets')
+      res.redirect('/tweets')
+    }
   }
 }
 

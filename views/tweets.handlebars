@@ -3,11 +3,11 @@
     <form action="/tweets" method="post" class="mb-3 text-right">
       <div class="form-group mb-1 text-left">
         <textarea class="form-control" id="tweet-textarea" rows="3" placeholder="發生了什麼有趣的事呢？"
-          name="description"></textarea>
+          name="description">{{tweetValue}}</textarea>
       </div>
       <div>
-        <div class="float-left text-success" id="tweet-valid-feedback"></div>
-        <button type="submit" class="btn btn-primary disabled" id="tweet-btn" style="cursor: no-drop">Tweet</button>
+        <div class="float-left" id="tweet-valid-feedback"></div>
+        <button type="submit" class="btn btn-primary" id="tweet-btn">Tweet</button>
       </div>
     </form>
     {{#each allTweets}}
@@ -63,8 +63,12 @@
   const tweetTextarea = document.querySelector('#tweet-textarea')
   const tweetBtn = document.querySelector('#tweet-btn')
   const tweetValidFeedback = document.querySelector('#tweet-valid-feedback')
-  let characterLength = 0
-  let leftCharacterLength = 140
+
+  const maxCharacterLength = 140
+  let characterLength = tweetTextarea.value.length
+  let leftCharacterLength = maxCharacterLength - characterLength
+
+  checkFeedback()
 
   tweetBtn.addEventListener('click', e => {
     if (characterLength > 0 && leftCharacterLength >= 0) {
@@ -75,8 +79,12 @@
   })
 
   tweetTextarea.addEventListener('input', e => {
+    checkFeedback()
+  })
+
+  function checkFeedback() {
     characterLength = tweetTextarea.value.length
-    leftCharacterLength = 140 - characterLength
+    leftCharacterLength = maxCharacterLength - characterLength
     tweetValidFeedback.innerText = `剩餘字數 ${leftCharacterLength}`
 
     if (characterLength > 0 && leftCharacterLength >= 0) {
@@ -94,5 +102,5 @@
       tweetValidFeedback.classList.remove('text-danger')
       tweetValidFeedback.classList.add('text-success')
     }
-  })
+  }
 </script>
