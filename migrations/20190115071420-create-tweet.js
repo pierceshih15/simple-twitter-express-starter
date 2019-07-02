@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       UserId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        onDelete: 'cascade'
       },
       description: {
         type: Sequelize.TEXT

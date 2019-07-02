@@ -1,5 +1,11 @@
 const db = require('../models')
+const moment = require('moment')
 const Tweet = db.Tweet
+const User = db.User
+const Reply = db.Reply
+const Like = db.Like
+
+const pageLimit = 5
 
 const adminController = {
   getTweets: (req, res) => {
@@ -13,7 +19,7 @@ const adminController = {
       offset: offset,
       limit: pageLimit
     }).then(result => {
-      console.log(result.count, result)
+      // console.log(result.count, result)
 
       let page = Number(req.query.page) || 1
       let pages = Math.ceil(result.count / pageLimit)
@@ -37,7 +43,28 @@ const adminController = {
       })
     })
   },
+
+  // 刪除單一推特的資料
+  // deleteTweet: (req, res) => {
+  //   return Tweet.findByPk(req.params.id).then(tweet => {
+  //     tweet.destroy().then(tweet => {
+  //       res.redirect('/admin/tweets')
+  //     })
+  //   })
+  // }
+
+  deleteTweet: (req, res) => {
+    return Tweet.destroy({
+      where: {
+        id: req.params.id
+      }
+    }).then(tweet => {
+      res.redirect('/admin/tweets')
+    })
   }
 }
 
 module.exports = adminController
+
+// const countOfReplies = tweets[0].Replies.length
+// const countOfLikes = tweets[0].Likes.length
