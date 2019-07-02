@@ -53,6 +53,40 @@ const tweetController = {
 
       res.redirect('/tweets')
     }
+  },
+
+  getTweet: async (req, res) => {
+    const tweetData = await Tweet.findOne({
+      where: { id: req.params.tweetId },
+      include: [User, Like, { model: Reply, include: User }]
+    })
+
+    let tweet = {
+      ...tweetData.dataValues,
+      numOfReply: tweetData.Replies.length,
+      numOfLike: tweetData.Likes.length
+    }
+
+    const tweetUserData = await User.findOne({
+      where: { id: tweetData.User.id },
+      include: [
+        Tweet,
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' },
+        { model: Tweet, as: 'LikedTweets' }
+      ]
+    })
+
+    let tweetUser = {
+      ...tweetUserData.dataValues,
+      numOfTweet: tweetUserData.Tweets.length,
+      numOfFollowing: tweetUserData.Followings.length,
+      numOfFollower: tweetUserData.Followers.length,
+      numOfLikedTweet: tweetUserData.LikedTweets.length,
+      isFollowed: req.user.Followings.map(following => following.id).includes(tweetUser.id)
+    }
+
+    res.render('reply', { tweet, tweetUser })
   }
 }
 

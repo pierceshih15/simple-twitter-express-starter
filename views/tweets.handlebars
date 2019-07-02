@@ -15,7 +15,7 @@
       <div class="row">
         <div class="col-3">
           <div class="my-1 mx-auto"
-            style="background-image: url({{this.User.avatar}});;border-radius: 50%; background-repeat: no-repeat;background-position: center;background-size: cover;width: 5em; height: 5em">
+            style="background-image: url({{this.User.avatar}});border-radius: 50%; background-repeat: no-repeat;background-position: center;background-size: cover;width: 5em; height: 5em">
           </div>
         </div>
         <div class="col-9">
@@ -44,6 +44,9 @@
           <small class="float-right text-secondary">{{this.FollowerCount}} 位粉絲</small>
           <p>{{this.introduction}}</p>
           <div class="w-100 text-right">
+            {{#ifCond this.id ../user.id}}
+
+            {{else}}
             {{#if this.isFollowed }}
             <form action="/folloships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
               <button type="submit" class="btn btn-danger">取消追蹤</button></form>
@@ -51,6 +54,7 @@
             <form action="/folloships/{{this.id}}" method="POST" style="display: contents;">
               <button type="submit" class="btn btn-primary">追蹤</button></form>
             {{/if}}
+            {{/ifCond}}
           </div>
         </div>
       </div>
