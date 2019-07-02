@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   )
   Like.associate = function(models) {
     Like.belongsTo(models.User)
-    Like.belongsTo(models.Tweet)
+    Like.belongsTo(models.Tweet, { onDelete: 'cascade', hooks: true })
   }
   return Like
 }
