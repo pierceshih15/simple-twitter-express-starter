@@ -1,0 +1,24 @@
+<form action="/users/{{user.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
+  <div class="row mt-5">
+    <div class="col-md-3">
+      <div class="custom-file">
+        <label for="avatar"><img src="{{user.avatar}}" class="card-img" alt="avatar"
+            style="width: 12em; height: 12em;"></label>
+        <input type="file" class="btn form-control-file" id="avatar" name="avatar">
+      </div>
+    </div>
+
+    <div class="col-md-9">
+      <div class="form-group">
+        <input type="text" class="form-control form-control-lg" name="name" id="name" value="{{user.name}}">
+      </div>
+
+      <div class="form-group">
+        <textarea class="form-control form-control-lg" id="introduction" name="introduction"
+          rows="4">{{user.introduction}}</textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+  </div>
+</form>

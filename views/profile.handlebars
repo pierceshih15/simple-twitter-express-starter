@@ -1,0 +1,48 @@
+<div class="row mt-3">
+  <div class="col-md-4">
+    <img src="{{profile.avatar}}" class="card-img" alt="avatar" style="border-radius: 50%; width: 12em; height: 12em;">
+    <div class="card-body">
+      <h3 class="card-title">{{profile.name}}</h3>
+      <p class="card-text">{{profile.introduction}}</p>
+
+      <p class="card-text"><a href="/users/{{profile.id}}/tweets">Tweet {{profile.Tweets.length}}</a></p>
+      <p class="card-text"><a href="/users/{{profile.id}}/followings">Following {{profile.Followings.length}}</a></p>
+      <p class="card-text"><a href="/users/{{profile.id}}/followers">Follower {{profile.Followers.length}}</a></p>
+      <p class="card-text"><a href="/users/{{profile.id}}/likes">Like {{profile.LikedTweets.length}}</a></p>
+
+      {{#ifCond profile.id user.id}}
+      <a href="/users/{{profile.id}}/edit" class="btn btn-outline-success">Edit Profile</a>
+      {{else}}
+      <div>
+        {{#if isFollowed }}
+        <form action="/followships/{{profile.id}}?_method=DELETE" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-danger">UnFollow</button>
+        </form>
+        {{else}}
+        <form action="/followships/{{profile.id}}" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-success">Follow</button>
+        </form>
+        {{/if}}
+      </div>
+      {{/ifCond}}
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    {{#each tweetArray}}
+    <div class="card mb-3 shadow-sm">
+      <div class="row no-gutters">
+        <div class="col-md-2 p-2">
+          <img class="card-img-top" src="{{this.User.avatar}}" alt="image" width="70px" height="120px">
+        </div>
+
+        <div class="col-md-10">
+          <h5>@{{this.User.name}}, {{moment this.createdAt}}</h5>
+          <p>{{this.description}}</p>
+          <p>Reply ({{this.Replies.length}}) Like ({{this.Likes.length}})</p>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
