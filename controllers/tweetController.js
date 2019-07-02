@@ -83,7 +83,7 @@ const tweetController = {
       numOfFollowing: tweetUserData.Followings.length,
       numOfFollower: tweetUserData.Followers.length,
       numOfLikedTweet: tweetUserData.LikedTweets.length,
-      isFollowed: req.user.Followings.map(following => following.id).includes(tweetUser.id)
+      isFollowed: req.user.Followings.map(following => following.id).includes(tweetUserData.id)
     }
 
     res.render('reply', { tweet, tweetUser })

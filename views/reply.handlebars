@@ -6,10 +6,10 @@
     <h3>{{tweetUser.name}}</h3>
     <p>{{tweetUser.introduction}}</p>
     <hr>
-    <p>Tweets {{tweetUser.numOfTweet}}</p>
-    <p>Following {{tweetUser.numOfFollowing}}</p>
-    <p>Follower {{tweetUser.numOfFollower}}</p>
-    <p>Like {{tweetUser.numOfLikedTweet}}</p>
+    <h5><a href="/users/{{tweetUser.id}}/tweets" class="text-dark">Tweets {{tweetUser.numOfTweet}}</a></h5>
+    <h5><a href="/users/{{tweetUser.id}}/followings" class="text-dark">Following {{tweetUser.numOfFollowing}}</a></h5>
+    <h5><a href="/users/{{tweetUser.id}}/followers" class="text-dark">Follower {{tweetUser.numOfFollower}}</a></h5>
+    <h5><a href="/users/{{tweetUser.id}}/likes" class="text-dark">Like {{tweetUser.numOfLikedTweet}}</a></h5>
     <hr>
     {{#ifCond user.id tweetUser.id}}
     <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
