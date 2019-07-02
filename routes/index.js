@@ -22,6 +22,9 @@ module.exports = (app, passport) => {
 
   app.get('/', authenticated, (req, res) => res.redirect('/tweets'))
   app.get('/tweets', authenticated, tweetController.getTweets)
+  app.post('/tweets', authenticated, tweetController.postTweet)
+  app.get('/tweets/:tweetId/replies', authenticated, tweetController.getTweet)
+  app.post('/tweets/:tweetId/replies', authenticated, replyController.postReply)
 
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/tweets'))
   app.get('/admin/tweets', authenticatedAdmin, adminController.getTweets)

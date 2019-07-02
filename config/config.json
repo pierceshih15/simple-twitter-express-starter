@@ -19,5 +19,13 @@
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "ginger-dev": {
+    "username": "root",
+    "password": "",
+    "database": "ac_twitter_workspace",
+    "host": "192.168.99.100",
+    "port": 32768,
+    "dialect": "mysql"
   }
 }
