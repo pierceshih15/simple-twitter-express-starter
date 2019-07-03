@@ -1,6 +1,6 @@
 <form action="/users/{{user.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
   <div class="row mt-5">
-    <div class="col-md-3">
+    <div class="col-md-3 col-12">
       <div class="custom-file">
         <label for="avatar"><img src="{{user.avatar}}" class="card-img" alt="avatar"
             style="width: 12em; height: 12em;"></label>
@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="col-md-9">
+    <div class="col-md-9 col-12">
       <div class="form-group">
         <input type="text" class="form-control form-control-lg" name="name" id="name" value="{{user.name}}">
       </div>
@@ -18,7 +18,7 @@
           rows="4">{{user.introduction}}</textarea>
       </div>
 
-      <button type="submit" class="btn btn-primary">Update</button>
+      <button type="submit" class="btn btn-primary float-right">Update</button>
     </div>
   </div>
 </form>

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row mt-3">
   <div class="col-md-4 col-12">
     <div class="w-100"
       style="background-image: url({{tweetUser.avatar}}); border-radius: 50%; background-repeat: no-repeat; background-position: center; background-size: cover; padding-top: 100%">
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="col-9">
-          <a href="/users/{{this.User.id}}/tweets">@{{tweet.User.name}}</a>
+          <a href="/users/{{tweet.User.id}}/tweets">@{{tweet.User.name}}</a>
           <span class="text-primary float-right">--- {{#moment tweet.createdAt}}{{/moment}}</span>
           <p>{{tweet.description}}</p>
           <a href="/tweets/{{tweet.id}}/replies" class="text-primary">Reply({{tweet.numOfReply}})</a>
