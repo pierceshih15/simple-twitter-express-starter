@@ -106,6 +106,20 @@ const userController = {
         })
       })
     }
+  },
+
+  addFollowing: async (req, res) => {
+    await Followship.create({
+      followerId: req.user.id,
+      followingId: req.query.followingId
+    })
+
+    res.redirect('back')
+  },
+
+  removeFollowing: async (req, res) => {
+    await Followship.destroy({ where: { id: req.params.id } })
+    res.redirect('back')
   }
 }
 

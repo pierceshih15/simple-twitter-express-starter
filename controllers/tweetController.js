@@ -3,6 +3,7 @@ const Tweet = db.Tweet
 const User = db.User
 const Like = db.Like
 const Reply = db.Reply
+const Followship = db.Followship
 
 const tweetController = {
   getTweets: async (req, res) => {
@@ -23,12 +24,23 @@ const tweetController = {
       numOfLike: tweet.Likes.length
     }))
 
-    let topTenUsers = users.map(user => ({
-      ...user.dataValues,
-      FollowerCount: user.Followers.length,
-      // 判斷目前登入使用者是否已追蹤該 User 物件
-      isFollowed: req.user.Followings.map(following => following.id).includes(user.id)
-    }))
+    let topTenUsers = []
+    let promises = users.map(async user => {
+      topTenUsers.push({
+        ...user.dataValues,
+        FollowerCount: user.Followers.length,
+        // 判斷目前登入使用者是否已追蹤該 User 物件
+        isFollowed: req.user.Followings.map(following => following.id).includes(user.id),
+        followshipId: await Followship.findOne({
+          where: {
+            followerId: req.user.id,
+            followingId: user.id
+          }
+        }).then(followship => (followship ? followship.dataValues.id : ''))
+      })
+      return 'ok'
+    })
+    await Promise.all(promises)
 
     topTenUsers = topTenUsers.sort((a, b) => {
       return b.FollowerCount - a.FollowerCount
@@ -83,7 +95,13 @@ const tweetController = {
       numOfFollowing: tweetUserData.Followings.length,
       numOfFollower: tweetUserData.Followers.length,
       numOfLikedTweet: tweetUserData.LikedTweets.length,
-      isFollowed: req.user.Followings.map(following => following.id).includes(tweetUserData.id)
+      isFollowed: req.user.Followings.map(following => following.id).includes(tweetUserData.id),
+      followshipId: await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: tweetUserData.id
+        }
+      }).then(followship => (followship ? followship.dataValues.id : ''))
     }
 
     res.render('reply', { tweet, tweetUser })

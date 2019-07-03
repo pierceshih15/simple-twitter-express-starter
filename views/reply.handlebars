@@ -14,11 +14,11 @@
     {{#ifCond user.id tweetUser.id}}
     <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
     {{else}}
-    {{#if this.isFollowed }}
-    <form action="/folloships/{{this.id}}?_method=DELETE" method="POST" style="display: contents;">
+    {{#if tweetUser.isFollowed }}
+    <form action="/followships/{{tweetUser.followshipId}}?_method=DELETE" method="POST" style="display: contents;">
       <button type="submit" class="btn btn-danger">取消追蹤</button></form>
     {{else}}
-    <form action="/folloships/{{this.id}}" method="POST" style="display: contents;">
+    <form action="/followships?followingId={{tweetUser.id}}" method="POST" style="display: contents;">
       <button type="submit" class="btn btn-primary">追蹤</button></form>
     {{/if}}
     {{/ifCond}}
