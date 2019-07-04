@@ -51,7 +51,8 @@
             <form action="/followships/{{this.followshipId}}?_method=DELETE" method="POST" style="display: contents;">
               <button type="submit" class="btn btn-danger">取消追蹤</button></form>
             {{else}}
-            <form action="/followships?followingId={{this.id}}" method="POST" style="display: contents;">
+            <form action="/followships" method="POST" style="display: contents;">
+              <input type="number" name="followingId" value="{{this.id}}" class="d-none">
               <button type="submit" class="btn btn-primary">追蹤</button></form>
             {{/if}}
             {{/ifCond}}
