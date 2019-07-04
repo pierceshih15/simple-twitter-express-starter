@@ -45,14 +45,6 @@ const adminController = {
   },
 
   // 刪除單一推特的資料
-  // deleteTweet: (req, res) => {
-  //   return Tweet.findByPk(req.params.id).then(tweet => {
-  //     tweet.destroy().then(tweet => {
-  //       res.redirect('/admin/tweets')
-  //     })
-  //   })
-  // }
-
   deleteTweet: (req, res) => {
     return Tweet.destroy({
       where: {
