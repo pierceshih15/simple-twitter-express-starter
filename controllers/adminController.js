@@ -45,14 +45,6 @@ const adminController = {
   },
 
   // 刪除單一推特的資料
-  // deleteTweet: (req, res) => {
-  //   return Tweet.findByPk(req.params.id).then(tweet => {
-  //     tweet.destroy().then(tweet => {
-  //       res.redirect('/admin/tweets')
-  //     })
-  //   })
-  // }
-
   deleteTweet: (req, res) => {
     return Tweet.destroy({
       where: {
@@ -61,10 +53,27 @@ const adminController = {
     }).then(tweet => {
       res.redirect('/admin/tweets')
     })
+  },
+
+  // 取得使用者清單
+  getUsers: (req, res) => {
+    return User.findAll({
+      include: [
+        Tweet,
+        Like,
+        Reply,
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' }
+      ]
+    }).then(users => {
+      let ResponseData = users.map(user => ({
+        ...user.dataValues,
+        TweetCount: user.Tweets.length
+      }))
+      ResponseData.sort((a, b) => b.TweetCount - a.TweetCount)
+      res.render('admin/users', { users: ResponseData })
+    })
   }
 }
 
 module.exports = adminController
-
-// const countOfReplies = tweets[0].Replies.length
-// const countOfLikes = tweets[0].Likes.length
