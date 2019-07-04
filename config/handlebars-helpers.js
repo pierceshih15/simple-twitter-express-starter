@@ -9,14 +9,6 @@ module.exports = {
   },
 
   moment: function(a) {
-<<<<<<< HEAD
     return moment(a).format('YYYY-MM-DD HH:mm:ss')
-=======
-    return moment(a).fromNow()
-  },
-
-  momentCreateAt: function(a) {
-    return moment(a).format('YYYY-MM-DD, HH:MM')
->>>>>>> 80a64cb7f2770338a9f3506df51996fcb305a5ff
   }
 }
