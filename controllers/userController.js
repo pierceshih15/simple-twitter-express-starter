@@ -63,10 +63,16 @@ const userController = {
         { model: User, as: 'Followings' },
         { model: User, as: 'Followers' }
       ]
-    }).then(user => {
+    }).then(async user => {
       const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
       let tweetArray = user.Tweets.sort((a, b) => b.createdAt - a.createdAt)
-      return res.render('profile', { profile: user, isFollowed, tweetArray })
+      const followshipId = await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: user.id
+        }
+      }).then(followship => (followship ? followship.dataValues.id : ''))
+      return res.render('profile', { profile: user, isFollowed, tweetArray, followshipId })
     })
   },
 
@@ -158,10 +164,7 @@ const userController = {
         introduction: user.introduction ? user.introduction.substring(0, 50) : '',
         FollowerCount: user.Followers.length,
         // 判斷目前登入使用者是否已追蹤該 User 物件
-        isFollowed: helpers
-          .getUser(req)
-          .Followings.map(following => following.id)
-          .includes(user.id),
+        isFollowed: req.user.Followings.map(following => following.id).includes(user.id),
         followshipId: await Followship.findOne({
           where: {
             followerId: req.user.id,
@@ -218,10 +221,7 @@ const userController = {
         introduction: user.introduction ? user.introduction.substring(0, 50) : '',
         FollowerCount: user.Followers.length,
         // 判斷目前登入使用者是否已追蹤該 User 物件
-        isFollowed: helpers
-          .getUser(req)
-          .Followings.map(following => following.id)
-          .includes(user.id),
+        isFollowed: req.user.Followings.map(following => following.id).includes(user.id),
         followshipId: await Followship.findOne({
           where: {
             followerId: req.user.id,
