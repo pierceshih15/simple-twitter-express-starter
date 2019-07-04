@@ -27,25 +27,26 @@
                 </a>
               </div>
               {{!-- 刪除按鈕 --}}
-              <div class="col-4 col-md-2">
+              <div class="col-4 col-md-2 text-right">
                 <form action="/admin/tweets/{{this.id}}?_method=DELETE" method="POST">
-                  <button type="submit" class="btn-sm btn-danger">Delete</button>
+                  <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
               </div>
             </div>
-            <div class="row col-12 col-md-11 mt-3">
+            <div class="row col-12 col-md-11 mt-2">
               <div class="col-12 col-md-11">
                 <div class="">{{this.description}}</div>
               </div>
             </div>
-            <div class="row col-12 col-md-12 mt-3">
-              <a class="col-6 col-md-3 text-info font-weight-bolder" href="/tweets/:id/replies">
-                Reply(2)
+            <div class="row col-12 col-md-12 mt-2">
+              <a class="col-6 col-md-3 text-info font-weight-bolder" href="/tweets/{{this.id}}/replies">
+                Reply({{this.Replies.length}})
               </a>
-              <a class="col-6 col-md-3 text-danger font-weight-bolder " href="/tweets/:id/replies">
-                Like(2)
-              </a>
-              <div class="col-12 col-md-6 text-secondary text-muted">{{moment this.createdAt}}
+              <div class="col-6 col-md-3 text-danger font-weight-bolder">
+                Like({{this.Likes.length}})
+              </div>
+              <div class="col-12 col-md-6 mx-0 px-0 text-secondary text-muted"> ---
+                {{moment this.createdAt}}
               </div>
             </div>
           </div>
@@ -56,7 +57,8 @@
   </div>
 </div>
 {{/each}}
-<div class="mt-4">
+
+{{!-- <div class="mt-4">
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
       <li class="page-item">
@@ -77,4 +79,4 @@
       </li>
     </ul>
   </nav>
-</div>
+</div> --}}
