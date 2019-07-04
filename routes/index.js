@@ -31,6 +31,8 @@ module.exports = (app, passport) => {
   app.get('/users/:id/tweets', authenticated, userController.getUser)
   app.get('/users/:id/edit', authenticated, userController.editUser)
   app.put('/users/:id', authenticated, upload.single('avatar'), userController.putUser)
+  app.get('/users/:id/followings', authenticated, userController.getFollowings)
+  app.get('/users/:id/followers', authenticated, userController.getFollowers)
 
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/tweets'))
   app.get('/admin/tweets', authenticatedAdmin, adminController.getTweets)
@@ -44,4 +46,7 @@ module.exports = (app, passport) => {
     userController.signIn
   )
   app.get('/logout', userController.logout)
+
+  app.post('/followships', authenticated, userController.addFollowing)
+  app.delete('/followships/:id', authenticated, userController.removeFollowing)
 }

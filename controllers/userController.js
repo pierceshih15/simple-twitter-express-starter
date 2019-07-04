@@ -106,6 +106,144 @@ const userController = {
         })
       })
     }
+  },
+
+  addFollowing: async (req, res) => {
+    if (req.user.id === parseInt(req.body.followingId)) {
+      res.redirect('back')
+    } else {
+      await Followship.create({
+        followerId: req.user.id,
+        followingId: parseInt(req.body.followingId)
+      })
+
+      res.redirect('back')
+    }
+  },
+
+  removeFollowing: async (req, res) => {
+    await Followship.destroy({ where: { id: req.params.id } })
+    res.redirect('back')
+  },
+
+  getFollowings: async (req, res) => {
+    const userData = await User.findByPk(req.params.id, {
+      include: [
+        Tweet,
+        { model: Tweet, as: 'LikedTweets' },
+        { model: User, as: 'Followings', include: [{ model: User, as: 'Followers' }] },
+        { model: User, as: 'Followers' }
+      ]
+    })
+
+    let user = {
+      ...userData.dataValues,
+      numOfTweet: userData.Tweets.length,
+      numOfFollowing: userData.Followings.length,
+      numOfFollower: userData.Followers.length,
+      numOfLikedTweet: userData.LikedTweets.length,
+      isFollowed: req.user.Followings.map(following => following.id).includes(userData.id),
+      followshipId: await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: userData.id
+        }
+      }).then(followship => (followship ? followship.dataValues.id : ''))
+    }
+
+    let userFollowings = []
+    let promises = user.Followings.map(async user => {
+      userFollowings.push({
+        ...user.dataValues,
+        introduction: user.introduction ? user.introduction.substring(0, 50) : '',
+        FollowerCount: user.Followers.length,
+        // 判斷目前登入使用者是否已追蹤該 User 物件
+        isFollowed: helpers
+          .getUser(req)
+          .Followings.map(following => following.id)
+          .includes(user.id),
+        followshipId: await Followship.findOne({
+          where: {
+            followerId: req.user.id,
+            followingId: user.id
+          }
+        }).then(followship => (followship ? followship.dataValues.id : '')),
+        followshipCreatedTime: await Followship.findOne({
+          where: {
+            followerId: req.params.id,
+            followingId: user.id
+          }
+        }).then(followship => followship.createdAt)
+      })
+      return 'ok'
+    })
+    await Promise.all(promises)
+
+    userFollowings = userFollowings.sort((a, b) => {
+      return b.followshipCreatedTime - a.followshipCreatedTime
+    })
+
+    res.render('userFollowing', { profile: user, userFollowings })
+  },
+
+  getFollowers: async (req, res) => {
+    const userData = await User.findByPk(req.params.id, {
+      include: [
+        Tweet,
+        { model: Tweet, as: 'LikedTweets' },
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers', include: [{ model: User, as: 'Followers' }] }
+      ]
+    })
+
+    let user = {
+      ...userData.dataValues,
+      numOfTweet: userData.Tweets.length,
+      numOfFollowing: userData.Followings.length,
+      numOfFollower: userData.Followers.length,
+      numOfLikedTweet: userData.LikedTweets.length,
+      isFollowed: req.user.Followings.map(following => following.id).includes(userData.id),
+      followshipId: await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: userData.id
+        }
+      }).then(followship => (followship ? followship.dataValues.id : ''))
+    }
+
+    let userFollowers = []
+    let promises = user.Followers.map(async user => {
+      userFollowers.push({
+        ...user.dataValues,
+        introduction: user.introduction ? user.introduction.substring(0, 50) : '',
+        FollowerCount: user.Followers.length,
+        // 判斷目前登入使用者是否已追蹤該 User 物件
+        isFollowed: helpers
+          .getUser(req)
+          .Followings.map(following => following.id)
+          .includes(user.id),
+        followshipId: await Followship.findOne({
+          where: {
+            followerId: req.user.id,
+            followingId: user.id
+          }
+        }).then(followship => (followship ? followship.dataValues.id : '')),
+        followshipCreatedTime: await Followship.findOne({
+          where: {
+            followerId: user.id,
+            followingId: req.params.id
+          }
+        }).then(followship => followship.createdAt)
+      })
+      return 'ok'
+    })
+    await Promise.all(promises)
+
+    userFollowers = userFollowers.sort((a, b) => {
+      return b.followshipCreatedTime - a.followshipCreatedTime
+    })
+
+    res.render('userFollower', { profile: user, userFollowers })
   }
 }
 
