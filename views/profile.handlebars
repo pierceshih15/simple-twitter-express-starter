@@ -16,11 +16,12 @@
     {{else}}
     <div>
       {{#if isFollowed }}
-      <form action="/followships/{{profile.id}}?_method=DELETE" method="POST" style="display: contents;">
+      <form action="/followships/{{followshipId}}?_method=DELETE" method="POST" style="display: contents;">
         <button type="submit" class="btn btn-danger">UnFollow</button>
       </form>
       {{else}}
-      <form action="/followships/{{profile.id}}" method="POST" style="display: contents;">
+      <form action="/followships" method="POST" style="display: contents;">
+        <input type="number" name="followingId" value="{{profile.id}}" class="d-none">
         <button type="submit" class="btn btn-success">Follow</button>
       </form>
       {{/if}}
