@@ -244,6 +244,38 @@ const userController = {
     })
 
     res.render('userFollower', { profile: user, userFollowers })
+  },
+
+  getLike: (req, res) => {
+    return User.findByPk(req.params.id, {
+      include: [
+        // 依照 LikeTweets 取出 Tweet 資料（包含 User, Reply, Like）
+        { model: Tweet, as: 'LikedTweets', include: [User, Reply, Like] },
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' }
+      ]
+    }).then(async user => {
+      const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
+
+      const followshipId = await Followship.findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: user.id
+        }
+      }).then(followship => (followship ? followship.dataValues.id : ''))
+
+      // 取出該使用者 Like 過的 tweet資料
+      let ResponseData = await user.LikedTweets.map(tweet => ({
+        ...tweet.dataValues,
+        // 設定 tweet 新屬性，以便後續排序
+        TweetOrder: tweet.Like.createdAt
+      }))
+
+      // 依照 Like 時間（TweetOrder）的先後順序排序
+      let tweetArray = await ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
+
+      return res.render('userLike', { profile: user, isFollowed, tweetArray, followshipId })
+    })
   }
 }
 
