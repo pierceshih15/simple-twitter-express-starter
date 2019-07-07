@@ -57,10 +57,6 @@ const userController = {
   },
 
   getUser: (req, res) => {
-    if (parseInt(req.params.id) !== helpers.getUser(req).id) {
-      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
-    }
-
     return User.findByPk(req.params.id, {
       include: [
         { model: Tweet, include: [User, Reply, Like] },
@@ -85,6 +81,9 @@ const userController = {
   },
 
   editUser: (req, res) => {
+    if (parseInt(req.params.id) !== helpers.getUser(req).id) {
+      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
+    }
     return User.findByPk(req.params.id).then(user => {
       return res.render('edit', { user })
     })

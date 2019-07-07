@@ -57,8 +57,9 @@ describe('# Admin::Tweet request', () => {
       })
       it('can delete other users tweet', done => {
         request(app)
-          .delete('/admin/tweets/1')
-          .expect(302) // #2 不知為何有問題
+          // .delete('/admin/tweets/1') 這裡的 id 應該為 2，因為 id = 1 在 tweet 的 model CRUD test 已經用掉了
+          .delete('/admin/tweets/2')
+          .expect(302)
           .end(function(err, res) {
             if (err) return done(err)
             db.Tweet.findAll().then(tweets => {

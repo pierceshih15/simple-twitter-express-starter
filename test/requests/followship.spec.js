@@ -21,9 +21,11 @@ describe('# followship request', () => {
       it('can not follow self', done => {
         request(app)
           .post('/followships')
-          .send('id=1')
+          // .send('id=1') 這裡的 id 應該要寫得更清楚是為了寫入到 followship 內的 followingId 欄位
+          .send('followingId=1')
           .set('Accept', 'application/json')
-          .expect(200)
+          // .expect(200) Create followship 並不需要重新 render 一個新頁面，簡單用 res.redirect() 跳轉就好
+          .expect(302)
           .end(function(err, res) {
             if (err) return done(err)
             db.User.findByPk(1, {
@@ -38,7 +40,8 @@ describe('# followship request', () => {
       it('will show following', done => {
         request(app)
           .post('/followships')
-          .send('id=2')
+          // .send('id=2') 這裡的 id 應該要寫得更清楚是為了寫入到 followship 內的 followingId 欄位
+          .send('followingId=2')
           .set('Accept', 'application/json')
           .expect(302)
           .end(function(err, res) {
@@ -75,7 +78,8 @@ describe('# followship request', () => {
 
       it('will update following index', done => {
         request(app)
-          .delete('/followships/2')
+          // .delete('/followships/2') 原來左邊的規格看起來像 /followship/:followingId，不符合 RESTful 的網址風格，應改為 DETELE /followship/:id，id 是緊跟著前面的資源，在這裡就是直接刪除 followship 資料表中唯一的一筆紀錄
+          .delete('/followships/1')
           .set('Accept', 'application/json')
           .expect(302)
           .end(function(err, res) {
