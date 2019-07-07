@@ -54,4 +54,6 @@ module.exports = (app, passport) => {
 
   // 喜不喜歡
   app.get('/users/:id/likes', authenticated, userController.getLike)
+  app.post('/tweets/:id/like', authenticated, userController.addLike)
+  app.post('/tweets/:id/unlike', authenticated, userController.removeLike)
 }

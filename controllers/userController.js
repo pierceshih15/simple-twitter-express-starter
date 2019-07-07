@@ -249,10 +249,14 @@ const userController = {
   getLike: (req, res) => {
     return User.findByPk(req.params.id, {
       include: [
-        // 依照 LikeTweets 取出 Tweet 資料（包含 User, Reply, Like）
-        { model: Tweet, as: 'LikedTweets', include: [User, Reply, Like] },
+        { model: Tweet, include: [User, Reply, Like] },
         { model: User, as: 'Followings' },
-        { model: User, as: 'Followers' }
+        { model: User, as: 'Followers' },
+        {
+          model: Tweet,
+          as: 'LikedTweets',
+          include: [User, Reply, Like, { model: User, as: 'LikedUsers' }]
+        }
       ]
     }).then(async user => {
       const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
@@ -264,18 +268,45 @@ const userController = {
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
 
-      // 取出該使用者 Like 過的 tweet資料
-      let ResponseData = await user.LikedTweets.map(tweet => ({
+      const ResponseData = await user.LikedTweets.map(tweet => ({
         ...tweet.dataValues,
-        // 設定 tweet 新屬性，以便後續排序
-        TweetOrder: tweet.Like.createdAt
+        // 設定 tweet 屬性，以便後續排序
+        TweetOrder: tweet.Likes.Like,
+        // 設定 isLiked 屬性，以便後續使用
+        isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
       }))
 
       // 依照 Like 時間（TweetOrder）的先後順序排序
-      let tweetArray = await ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
+      let tweetArray = await ResponseData.sort((a, b) => b.createdAt - a.createdAt)
 
-      return res.render('userLike', { profile: user, isFollowed, tweetArray, followshipId })
+      console.log(tweetArray)
+
+      return res.render('userLike', {
+        profile: user,
+        isFollowed,
+        followshipId,
+        tweetArray
+      })
     })
+  },
+
+  addLike: (req, res) => {
+    Like.create({
+      UserId: req.user.id,
+      TweetId: req.params.id
+    }).then(like => {
+      return res.redirect('back')
+    })
+  },
+
+  removeLike: (req, res) => {
+    Like.destroy({
+      where: {
+        UserId: req.user.id,
+        TweetId: req.params.id
+      }
+    })
+    return res.redirect('back')
   }
 }
 
