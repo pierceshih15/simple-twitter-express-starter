@@ -38,7 +38,26 @@
           <span class="text-primary float-right">--- {{#moment tweet.createdAt}}{{/moment}}</span>
           <p>{{tweet.description}}</p>
           <a href="/tweets/{{tweet.id}}/replies" class="text-primary">Reply({{tweet.numOfReply}})</a>
-          <span class="text-danger pl-3">Like({{tweet.numOfLike}})</span>
+          {{!-- 喜歡與不喜歡的新增 --}}
+          {{#if tweet.isLiked}}
+          <form action="/tweets/{{tweet.id}}/unlike" method="POST" class="d-inline-block">
+            <button type="submit" class="border-0">
+              <i class="fas fa-heart text-danger pl-3">
+                <span class="pr-5">Like({{tweet.Likes.length}})</span>
+              </i>
+            </button>
+          </form>
+          {{else}}
+          <form action="/tweets/{{tweet.id}}/like" method="POST" class="d-inline-block">
+            <button type="submit" class="border-0">
+              <i class="fas fa-heart text-secondary pl-3">
+                <span class="pr-5">
+                  Like({{tweet.Likes.length}})
+                </span>
+              </i>
+            </button>
+          </form>
+          {{/if}}
         </div>
       </div>
     </div>

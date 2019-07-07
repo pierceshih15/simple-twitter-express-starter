@@ -77,14 +77,20 @@ const tweetController = {
   getTweet: async (req, res) => {
     const tweetData = await Tweet.findOne({
       where: { id: req.params.tweetId },
-      include: [User, Like, { model: Reply, include: User }]
+      include: [User, Like, { model: Reply, include: User }],
+      // 喜歡與不喜歡的新增，多拿以 LikedUsers 為參考的 User 資料
+      include: [User, Reply, Like, { model: User, as: 'LikedUsers' }]
     })
 
     let tweet = {
       ...tweetData.dataValues,
       numOfReply: tweetData.Replies.length,
-      numOfLike: tweetData.Likes.length
+      numOfLike: tweetData.Likes.length,
+      // 喜歡與不喜歡的新增
+      isLiked: tweetData.LikedUsers.map(a => a.id).includes(req.user.id)
     }
+    console.log(tweet)
+    console.log(tweet.isLiked)
 
     const tweetUserData = await User.findOne({
       where: { id: tweetData.User.id },
