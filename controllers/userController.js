@@ -4,6 +4,7 @@ const { User, Tweet, Reply, Like, Followship } = db
 const Sequelize = require('sequelize')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
+const helpers = require('../_helpers')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -56,6 +57,10 @@ const userController = {
   },
 
   getUser: (req, res) => {
+    if (parseInt(req.params.id) !== helpers.getUser(req).id) {
+      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
+    }
+
     return User.findByPk(req.params.id, {
       include: [
         { model: Tweet, include: [User, Reply, Like, { model: User, as: 'LikedUsers' }] },
@@ -64,11 +69,14 @@ const userController = {
         { model: User, as: 'Followers' }
       ]
     }).then(async user => {
-      const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
-
+      const isFollowed = helpers
+        .getUser(req)
+        .Followings.map(d => d.id)
+        .includes(user.id)
+      let tweetArray = user.Tweets.sort((a, b) => b.createdAt - a.createdAt)
       const followshipId = await Followship.findOne({
         where: {
-          followerId: req.user.id,
+          followerId: helpers.getUser(req).id,
           followingId: user.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
@@ -92,8 +100,8 @@ const userController = {
   },
 
   putUser: (req, res) => {
-    if (Number(req.params.id) !== req.user.id) {
-      return res.redirect(`/users/${req.user.id}/tweets`)
+    if (parseInt(req.params.id) !== helpers.getUser(req).id) {
+      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
     }
 
     const { file } = req
@@ -124,11 +132,11 @@ const userController = {
   },
 
   addFollowing: async (req, res) => {
-    if (req.user.id === parseInt(req.body.followingId)) {
+    if (helpers.getUser(req).id === parseInt(req.body.followingId)) {
       res.redirect('back')
     } else {
       await Followship.create({
-        followerId: req.user.id,
+        followerId: helpers.getUser(req).id,
         followingId: parseInt(req.body.followingId)
       })
 
@@ -157,10 +165,13 @@ const userController = {
       numOfFollowing: userData.Followings.length,
       numOfFollower: userData.Followers.length,
       numOfLikedTweet: userData.LikedTweets.length,
-      isFollowed: req.user.Followings.map(following => following.id).includes(userData.id),
+      isFollowed: helpers
+        .getUser(req)
+        .Followings.map(following => following.id)
+        .includes(userData.id),
       followshipId: await Followship.findOne({
         where: {
-          followerId: req.user.id,
+          followerId: helpers.getUser(req).id,
           followingId: userData.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
@@ -173,10 +184,13 @@ const userController = {
         introduction: user.introduction ? user.introduction.substring(0, 50) : '',
         FollowerCount: user.Followers.length,
         // 判斷目前登入使用者是否已追蹤該 User 物件
-        isFollowed: req.user.Followings.map(following => following.id).includes(user.id),
+        isFollowed: helpers
+          .getUser(req)
+          .Followings.map(following => following.id)
+          .includes(user.id),
         followshipId: await Followship.findOne({
           where: {
-            followerId: req.user.id,
+            followerId: helpers.getUser(req).id,
             followingId: user.id
           }
         }).then(followship => (followship ? followship.dataValues.id : '')),
@@ -214,10 +228,13 @@ const userController = {
       numOfFollowing: userData.Followings.length,
       numOfFollower: userData.Followers.length,
       numOfLikedTweet: userData.LikedTweets.length,
-      isFollowed: req.user.Followings.map(following => following.id).includes(userData.id),
+      isFollowed: helpers
+        .getUser(req)
+        .Followings.map(following => following.id)
+        .includes(userData.id),
       followshipId: await Followship.findOne({
         where: {
-          followerId: req.user.id,
+          followerId: helpers.getUser(req).id,
           followingId: userData.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
@@ -230,10 +247,13 @@ const userController = {
         introduction: user.introduction ? user.introduction.substring(0, 50) : '',
         FollowerCount: user.Followers.length,
         // 判斷目前登入使用者是否已追蹤該 User 物件
-        isFollowed: req.user.Followings.map(following => following.id).includes(user.id),
+        isFollowed: helpers
+          .getUser(req)
+          .Followings.map(following => following.id)
+          .includes(user.id),
         followshipId: await Followship.findOne({
           where: {
-            followerId: req.user.id,
+            followerId: helpers.getUser(req).id,
             followingId: user.id
           }
         }).then(followship => (followship ? followship.dataValues.id : '')),
@@ -268,11 +288,14 @@ const userController = {
         }
       ]
     }).then(async user => {
-      const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
+      const isFollowed = helpers
+        .getUser(req)
+        .Followings.map(d => d.id)
+        .includes(user.id)
 
       const followshipId = await Followship.findOne({
         where: {
-          followerId: req.user.id,
+          followerId: helpers.getUser(req).id,
           followingId: user.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
@@ -282,7 +305,7 @@ const userController = {
         // 設定 tweet 屬性，以便後續排序，按照 tweet 創建時間
         TweetOrder: tweet.Like.createdAt,
         // 設定 isLiked 屬性，以便後續使用
-        isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
+        isLiked: tweet.LikedUsers.map(a => a.id).includes(helpers.getUser(req).id)
       }))
 
       // 依照 Like 時間（TweetOrder）的先後順序排序
@@ -299,7 +322,7 @@ const userController = {
 
   addLike: (req, res) => {
     Like.create({
-      UserId: req.user.id,
+      UserId: helpers.getUser(req).id,
       TweetId: req.params.id
     }).then(like => {
       return res.redirect('back')
@@ -309,7 +332,7 @@ const userController = {
   removeLike: (req, res) => {
     Like.destroy({
       where: {
-        UserId: req.user.id,
+        UserId: helpers.getUser(req).id,
         TweetId: req.params.id
       }
     })

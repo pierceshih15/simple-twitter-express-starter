@@ -13,7 +13,7 @@ describe('# Admin::Tweet request', () => {
     describe('if normal user log in', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
         await db.User.create({})
       })
 
@@ -39,7 +39,7 @@ describe('# Admin::Tweet request', () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon
           .stub(helpers, 'getUser')
-          .returns({ id: 1, Following: [], role: 'admin' })
+          .returns({ id: 1, Followings: [], role: 'admin' })
         await db.User.create({})
         await db.User.create({})
         await db.Tweet.create({ UserId: 2, description: 'Tweet1' })
@@ -58,7 +58,7 @@ describe('# Admin::Tweet request', () => {
       it('can delete other users tweet', done => {
         request(app)
           .delete('/admin/tweets/1')
-          .expect(302)
+          .expect(302) // #2 不知為何有問題
           .end(function(err, res) {
             if (err) return done(err)
             db.Tweet.findAll().then(tweets => {

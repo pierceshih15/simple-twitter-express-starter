@@ -1,5 +1,6 @@
 const db = require('../models')
 const Reply = db.Reply
+const helpers = require('../_helpers')
 
 const replyController = {
   postReply: async (req, res) => {
@@ -8,7 +9,7 @@ const replyController = {
       res.redirect(`/tweets/${req.params.tweetId}/replies`)
     } else {
       await Reply.create({
-        UserId: req.user.id,
+        UserId: helpers.getUser(req).id,
         TweetId: req.params.tweetId,
         comment: req.body.comment
       })

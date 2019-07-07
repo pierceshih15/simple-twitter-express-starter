@@ -4,6 +4,7 @@ const User = db.User
 const Like = db.Like
 const Reply = db.Reply
 const Followship = db.Followship
+const helpers = require('../_helpers')
 
 const tweetController = {
   getTweets: async (req, res) => {
@@ -37,10 +38,13 @@ const tweetController = {
         ...user.dataValues,
         FollowerCount: user.Followers.length,
         // 判斷目前登入使用者是否已追蹤該 User 物件
-        isFollowed: req.user.Followings.map(following => following.id).includes(user.id),
+        isFollowed: helpers
+          .getUser(req)
+          .Followings.map(following => following.id)
+          .includes(user.id),
         followshipId: await Followship.findOne({
           where: {
-            followerId: req.user.id,
+            followerId: helpers.getUser(req).id,
             followingId: user.id
           }
         }).then(followship => (followship ? followship.dataValues.id : ''))
@@ -66,7 +70,7 @@ const tweetController = {
       res.redirect('/tweets')
     } else {
       await Tweet.create({
-        UserId: req.user.id,
+        UserId: helpers.getUser(req).id,
         description: req.body.description
       })
 
@@ -108,10 +112,13 @@ const tweetController = {
       numOfFollowing: tweetUserData.Followings.length,
       numOfFollower: tweetUserData.Followers.length,
       numOfLikedTweet: tweetUserData.LikedTweets.length,
-      isFollowed: req.user.Followings.map(following => following.id).includes(tweetUserData.id),
+      isFollowed: helpers
+        .getUser(req)
+        .Followings.map(following => following.id)
+        .includes(tweetUserData.id),
       followshipId: await Followship.findOne({
         where: {
-          followerId: req.user.id,
+          followerId: helpers.getUser(req).id,
           followingId: tweetUserData.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
