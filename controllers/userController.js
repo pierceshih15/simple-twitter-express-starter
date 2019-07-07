@@ -58,20 +58,29 @@ const userController = {
   getUser: (req, res) => {
     return User.findByPk(req.params.id, {
       include: [
-        { model: Tweet, include: [User, Reply, Like] },
+        { model: Tweet, include: [User, Reply, Like, { model: User, as: 'LikedUsers' }] },
         { model: Tweet, as: 'LikedTweets' },
         { model: User, as: 'Followings' },
         { model: User, as: 'Followers' }
       ]
     }).then(async user => {
       const isFollowed = req.user.Followings.map(d => d.id).includes(user.id)
-      let tweetArray = user.Tweets.sort((a, b) => b.createdAt - a.createdAt)
+
       const followshipId = await Followship.findOne({
         where: {
           followerId: req.user.id,
           followingId: user.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
+
+      const ResponseData = user.Tweets.map(tweet => ({
+        ...tweet.dataValues,
+        TweetOrder: tweet.createdAt,
+        isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
+      }))
+
+      let tweetArray = ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
+
       return res.render('profile', { profile: user, isFollowed, tweetArray, followshipId })
     })
   },
