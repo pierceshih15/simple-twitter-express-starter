@@ -11,9 +11,14 @@ const tweetController = {
     req.session.tweetValue = ''
 
     const tweets = await Tweet.findAll({
-      include: [User, Like, Reply],
+      // 喜歡與不喜歡的新增，多拿以 LikedUsers 為參考的 User 資料
+      include: [User, Reply, Like, { model: User, as: 'LikedUsers' }],
+      // 原始
+      // include: [User, Like, Reply],
+      // 原始
       order: [['createdAt', 'DESC']]
     })
+
     const users = await User.findAll({
       include: [{ model: User, as: 'Followers' }]
     })
@@ -21,7 +26,9 @@ const tweetController = {
     let allTweets = tweets.map(tweet => ({
       ...tweet.dataValues,
       numOfReply: tweet.Replies.length,
-      numOfLike: tweet.Likes.length
+      numOfLike: tweet.Likes.length,
+      // 喜歡與不喜歡的新增
+      isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
     }))
 
     let topTenUsers = []
