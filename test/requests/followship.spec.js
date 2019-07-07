@@ -11,7 +11,7 @@ describe('# followship request', () => {
     describe('when user1 wants to follow user2', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
         await db.User.destroy({ where: {}, truncate: true })
         await db.Followship.destroy({ where: {}, truncate: true })
         await db.User.create({})
@@ -27,9 +27,9 @@ describe('# followship request', () => {
           .end(function(err, res) {
             if (err) return done(err)
             db.User.findByPk(1, {
-              include: [{ model: db.User, as: 'Follower' }, { model: db.User, as: 'Following' }]
+              include: [{ model: db.User, as: 'Followers' }, { model: db.User, as: 'Followings' }]
             }).then(user => {
-              user.Following.length.should.equal(0)
+              user.Followings.length.should.equal(0)
               return done()
             })
           })
@@ -44,9 +44,9 @@ describe('# followship request', () => {
           .end(function(err, res) {
             if (err) return done(err)
             db.User.findByPk(1, {
-              include: [{ model: db.User, as: 'Follower' }, { model: db.User, as: 'Following' }]
+              include: [{ model: db.User, as: 'Followers' }, { model: db.User, as: 'Followings' }]
             }).then(user => {
-              user.Following.length.should.equal(1)
+              user.Followings.length.should.equal(1)
               return done()
             })
           })
@@ -65,7 +65,7 @@ describe('# followship request', () => {
     describe('when user1 wants to unfollow user2', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
         await db.User.destroy({ where: {}, truncate: true })
         await db.Followship.destroy({ where: {}, truncate: true })
         await db.User.create({})
@@ -81,9 +81,9 @@ describe('# followship request', () => {
           .end(function(err, res) {
             if (err) return done(err)
             db.User.findByPk(1, {
-              include: [{ model: db.User, as: 'Follower' }, { model: db.User, as: 'Following' }]
+              include: [{ model: db.User, as: 'Followers' }, { model: db.User, as: 'Followings' }]
             }).then(user => {
-              user.Following.length.should.equal(0)
+              user.Followings.length.should.equal(0)
               return done()
             })
           })

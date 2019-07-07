@@ -29,7 +29,7 @@ const adminController = {
 
       const data = result.rows.map(r => ({
         ...r.dataValues,
-        description: r.dataValues.description.substring(0, 50)
+        description: r.dataValues.description ? r.dataValues.description.substring(0, 50) : ''
       }))
 
       return res.render('admin/tweets', {
@@ -50,6 +50,7 @@ const adminController = {
         id: req.params.id
       }
     }).then(tweet => {
+      // console.log(tweet)
       res.redirect('/admin/tweets')
     })
   },

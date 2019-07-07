@@ -12,7 +12,7 @@ describe('# user request', () => {
   context('# tweets', () => {
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
 
       await db.User.destroy({ where: {}, truncate: true })
       await db.Tweet.destroy({ where: {}, truncate: true })
@@ -62,7 +62,7 @@ describe('# user request', () => {
   context('# edit', () => {
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
       await db.User.create({})
       await db.User.create({})
     })
@@ -100,7 +100,7 @@ describe('# user request', () => {
   context('#update', () => {
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
       await db.User.create({})
     })
 
@@ -131,7 +131,7 @@ describe('# user request', () => {
   context('#followings #followers', () => {
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
       await db.User.create({ name: 'User1' })
       await db.User.create({ name: 'User2' })
       await db.User.create({ name: 'User3' })
@@ -204,7 +204,7 @@ describe('# user request', () => {
   context('#likes', () => {
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Following: [] })
+      this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
       await db.User.create({})
       await db.Tweet.create({ UserId: 1, description: 'Tweet1' })
       await db.Like.create({ UserId: 1, TweetId: 1 })
