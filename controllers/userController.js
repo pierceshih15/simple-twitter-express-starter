@@ -63,7 +63,7 @@ const userController = {
 
     return User.findByPk(req.params.id, {
       include: [
-        { model: Tweet, include: [User, Reply, Like] },
+        { model: Tweet, include: [User, Reply, Like, { model: User, as: 'LikedUsers' }] },
         { model: Tweet, as: 'LikedTweets' },
         { model: User, as: 'Followings' },
         { model: User, as: 'Followers' }
@@ -80,6 +80,15 @@ const userController = {
           followingId: user.id
         }
       }).then(followship => (followship ? followship.dataValues.id : ''))
+
+      const ResponseData = user.Tweets.map(tweet => ({
+        ...tweet.dataValues,
+        TweetOrder: tweet.createdAt,
+        isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
+      }))
+
+      let tweetArray = ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
+
       return res.render('profile', { profile: user, isFollowed, tweetArray, followshipId })
     })
   },
@@ -293,16 +302,14 @@ const userController = {
 
       const ResponseData = await user.LikedTweets.map(tweet => ({
         ...tweet.dataValues,
-        // 設定 tweet 屬性，以便後續排序
-        TweetOrder: tweet.Likes.Like,
+        // 設定 tweet 屬性，以便後續排序，按照 tweet 創建時間
+        TweetOrder: tweet.Like.createdAt,
         // 設定 isLiked 屬性，以便後續使用
         isLiked: tweet.LikedUsers.map(a => a.id).includes(helpers.getUser(req).id)
       }))
 
       // 依照 Like 時間（TweetOrder）的先後順序排序
-      let tweetArray = await ResponseData.sort((a, b) => b.createdAt - a.createdAt)
-
-      console.log(tweetArray)
+      let tweetArray = await ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
 
       return res.render('userLike', {
         profile: user,
