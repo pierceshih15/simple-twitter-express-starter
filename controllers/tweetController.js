@@ -29,7 +29,7 @@ const tweetController = {
       numOfReply: tweet.Replies.length,
       numOfLike: tweet.Likes.length,
       // 喜歡與不喜歡的新增
-      isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
+      isLiked: tweet.LikedUsers.map(a => a.id).includes(helpers.getUser(req).id)
     }))
 
     let topTenUsers = []
@@ -91,10 +91,8 @@ const tweetController = {
       numOfReply: tweetData.Replies.length,
       numOfLike: tweetData.Likes.length,
       // 喜歡與不喜歡的新增
-      isLiked: tweetData.LikedUsers.map(a => a.id).includes(req.user.id)
+      isLiked: tweetData.LikedUsers.map(a => a.id).includes(helpers.getUser(req).id)
     }
-    console.log(tweet)
-    console.log(tweet.isLiked)
 
     const tweetUserData = await User.findOne({
       where: { id: tweetData.User.id },
