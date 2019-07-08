@@ -7,6 +7,9 @@ var app = require('../../app')
 var helpers = require('../../_helpers')
 var should = chai.should()
 const db = require('../../models')
+const sleep = milliseconds => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 describe('# user request', () => {
   context('# tweets', () => {
@@ -107,7 +110,8 @@ describe('# user request', () => {
     describe('successfully update', () => {
       it('will change users intro', done => {
         request(app)
-          .post('/users/1/edit')
+          // .post('/users/1/edit')
+          .put('/users/1/edit')
           .send('name=abc')
           .set('Accept', 'application/json')
           .expect(302)
@@ -138,8 +142,11 @@ describe('# user request', () => {
 
       const date = new Date()
       await db.Followship.create({ followerId: 1, followingId: 2 })
+      await sleep(1000) // 創建時間會四捨五入到整數秒，所以每個新增紀錄至少要間隔 1 秒才能真正比較出前後新增的順序
       await db.Followship.create({ followerId: 1, followingId: 3 })
+      await sleep(1000)
       await db.Followship.create({ followerId: 2, followingId: 1 })
+      await sleep(1000)
       await db.Followship.create({ followerId: 3, followingId: 1 })
     })
 

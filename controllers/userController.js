@@ -57,10 +57,6 @@ const userController = {
   },
 
   getUser: (req, res) => {
-    if (parseInt(req.params.id) !== helpers.getUser(req).id) {
-      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
-    }
-
     return User.findByPk(req.params.id, {
       include: [
         { model: Tweet, include: [User, Reply, Like, { model: User, as: 'LikedUsers' }] },
@@ -84,16 +80,19 @@ const userController = {
       const ResponseData = user.Tweets.map(tweet => ({
         ...tweet.dataValues,
         TweetOrder: tweet.createdAt,
-        isLiked: tweet.LikedUsers.map(a => a.id).includes(req.user.id)
+        isLiked: tweet.LikedUsers.map(a => a.id).includes(helpers.getUser(req).id)
       }))
 
-      let tweetArray = ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
+      tweetArray = ResponseData.sort((a, b) => b.TweetOrder - a.TweetOrder)
 
       return res.render('profile', { profile: user, isFollowed, tweetArray, followshipId })
     })
   },
 
   editUser: (req, res) => {
+    if (parseInt(req.params.id) !== helpers.getUser(req).id) {
+      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
+    }
     return User.findByPk(req.params.id).then(user => {
       return res.render('edit', { user })
     })
