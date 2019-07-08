@@ -81,9 +81,8 @@ const tweetController = {
   getTweet: async (req, res) => {
     const tweetData = await Tweet.findOne({
       where: { id: req.params.tweetId },
-      include: [User, Like, { model: Reply, include: User }],
       // 喜歡與不喜歡的新增，多拿以 LikedUsers 為參考的 User 資料
-      include: [User, Reply, Like, { model: User, as: 'LikedUsers' }]
+      include: [User, Like, { model: Reply, include: User }, { model: User, as: 'LikedUsers' }]
     })
 
     let tweet = {

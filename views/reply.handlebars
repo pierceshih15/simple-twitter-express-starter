@@ -26,24 +26,24 @@
   </div>
   <div class="col-md-8 col-12">
     <h2>Tweet</h2>
-    <div class="card w-100 mt-1 p-2">
-      <div class="row">
-        <div class="col-3">
+    <div class="card w-100 shadow-sm mb-3 p-2">
+      <div class="row no-gutters">
+        <div class="col-md-2 p-2">
           <div class="my-1 mx-auto"
             style="background-image: url({{tweet.User.avatar}});border-radius: 50%; background-repeat: no-repeat;background-position: center;background-size: cover;width: 5em; height: 5em">
           </div>
         </div>
-        <div class="col-9">
+        <div class="col-md-10">
           <a href="/users/{{tweet.User.id}}/tweets">@{{tweet.User.name}}</a>
           <span class="text-primary float-right">--- {{#moment tweet.createdAt}}{{/moment}}</span>
           <p>{{tweet.description}}</p>
-          <a href="/tweets/{{tweet.id}}/replies" class="text-primary">Reply({{tweet.numOfReply}})</a>
+          <a href="/tweets/{{tweet.id}}/replies" class="text-primary pr-2">Reply({{tweet.numOfReply}})</a>
           {{!-- 喜歡與不喜歡的新增 --}}
           {{#if tweet.isLiked}}
           <form action="/tweets/{{tweet.id}}/unlike" method="POST" class="d-inline-block">
             <button type="submit" class="border-0">
               <i class="fas fa-heart text-danger pl-3">
-                <span class="pr-5">Like({{tweet.Likes.length}})</span>
+                <span class="pr-4">Like({{tweet.Likes.length}})</span>
               </i>
             </button>
           </form>
@@ -51,9 +51,7 @@
           <form action="/tweets/{{tweet.id}}/like" method="POST" class="d-inline-block">
             <button type="submit" class="border-0">
               <i class="fas fa-heart text-secondary pl-3">
-                <span class="pr-5">
-                  Like({{tweet.Likes.length}})
-                </span>
+                <span class="pr-4">Like({{tweet.Likes.length}})</span>
               </i>
             </button>
           </form>
@@ -61,16 +59,16 @@
         </div>
       </div>
     </div>
-    <h2 class="my-2">Replies</h2>
+    <h2 class="mt-4">Replies</h2>
     {{#each tweet.Replies}}
-    <div class="card w-100 mt-1 p-2">
-      <div class="row">
-        <div class="col-3">
+    <div class="card w-100 shadow-sm mb-3 p-2">
+      <div class="row no-gutters">
+        <div class="col-md-2 p-2">
           <div class="my-1 mx-auto"
             style="background-image: url({{this.User.avatar}});border-radius: 50%; background-repeat: no-repeat;background-position: center;background-size: cover;width: 5em; height: 5em">
           </div>
         </div>
-        <div class="col-9">
+        <div class="col-md-10">
           <a href="/users/{{this.User.id}}/tweets">@{{this.User.name}}</a>
           <span class="text-primary float-right">--- {{#moment this.createdAt}}{{/moment}}</span>
           <p>{{this.comment}}</p>
@@ -80,7 +78,7 @@
     {{/each}}
     <form action="/tweets/{{tweet.id}}/replies" method="post" class="my-2 text-right">
       <div class="form-group mb-1 text-left">
-        <textarea class="form-control" id="tweet-textarea" rows="3" name="comment"></textarea>
+        <textarea class="form-control form-control-lg" id="tweet-textarea" rows="4" name="comment"></textarea>
       </div>
       <div>
         <div class="float-left" id="tweet-valid-feedback"></div>
