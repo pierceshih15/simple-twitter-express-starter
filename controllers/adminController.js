@@ -4,7 +4,6 @@ const Tweet = db.Tweet
 const User = db.User
 const Reply = db.Reply
 const Like = db.Like
-
 // const pageLimit = 5
 
 const adminController = {
