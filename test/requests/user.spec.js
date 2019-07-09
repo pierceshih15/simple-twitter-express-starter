@@ -13,6 +13,7 @@ const sleep = milliseconds => {
 
 describe('# user request', () => {
   context('# tweets', () => {
+
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
       this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
@@ -101,9 +102,11 @@ describe('# user request', () => {
   })
 
   context('#update', () => {
+
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
       this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
+
       await db.User.create({})
     })
 
@@ -133,6 +136,7 @@ describe('# user request', () => {
   })
 
   context('#followings #followers', () => {
+
     before(async () => {
       this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
       this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
@@ -152,6 +156,7 @@ describe('# user request', () => {
 
     describe('go to following page', () => {
       it('will show all following users', done => {
+
         request(app)
           .get('/users/1/followings')
           .set('Accept', 'application/json')
@@ -177,6 +182,7 @@ describe('# user request', () => {
 
     describe('go to follower page', () => {
       it('can see follower on other user page', done => {
+
         request(app)
           .get('/users/1/followers')
           .set('Accept', 'application/json')
@@ -197,6 +203,7 @@ describe('# user request', () => {
             res.text.indexOf('User2').should.above(res.text.indexOf('User3'))
             return done()
           })
+
       })
     })
 

@@ -9,11 +9,13 @@ const db = require('../../models')
 describe('# followship request', () => {
   context('#create', () => {
     describe('when user1 wants to follow user2', () => {
+
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
         await db.User.destroy({ where: {}, truncate: true })
         await db.Followship.destroy({ where: {}, truncate: true })
+
         await db.User.create({})
         await db.User.create({})
       })
@@ -37,7 +39,8 @@ describe('# followship request', () => {
           })
       })
 
-      it('will show following', done => {
+
+      it('will show followings', (done) => {
         request(app)
           .post('/followships')
           // .send('id=2') 這裡的 id 應該要寫得更清楚是為了寫入到 followship 內的 followingId 欄位
@@ -45,12 +48,14 @@ describe('# followship request', () => {
           .set('Accept', 'application/json')
           .expect(302)
           .end(function(err, res) {
+
             if (err) return done(err)
             db.User.findByPk(1, {
               include: [{ model: db.User, as: 'Followers' }, { model: db.User, as: 'Followings' }]
             }).then(user => {
               user.Followings.length.should.equal(1)
               return done()
+
             })
           })
       })
@@ -66,29 +71,34 @@ describe('# followship request', () => {
 
   context('#destroy', () => {
     describe('when user1 wants to unfollow user2', () => {
+
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
         await db.User.destroy({ where: {}, truncate: true })
         await db.Followship.destroy({ where: {}, truncate: true })
+
         await db.User.create({})
         await db.User.create({})
         await db.Followship.create({ followerId: 1, followingId: 2 })
       })
 
       it('will update following index', done => {
+
         request(app)
           // .delete('/followships/2') 原來左邊的規格看起來像 /followship/:followingId，不符合 RESTful 的網址風格，應改為 DETELE /followship/:id，id 是緊跟著前面的資源，在這裡就是直接刪除 followship 資料表中唯一的一筆紀錄
           .delete('/followships/1')
           .set('Accept', 'application/json')
           .expect(302)
           .end(function(err, res) {
+
             if (err) return done(err)
             db.User.findByPk(1, {
               include: [{ model: db.User, as: 'Followers' }, { model: db.User, as: 'Followings' }]
             }).then(user => {
               user.Followings.length.should.equal(0)
               return done()
+
             })
           })
       })

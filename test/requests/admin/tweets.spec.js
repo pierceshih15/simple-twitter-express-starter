@@ -14,6 +14,7 @@ describe('# Admin::Tweet request', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
+
         await db.User.create({})
       })
 
@@ -35,11 +36,13 @@ describe('# Admin::Tweet request', () => {
     })
 
     describe('if admin user log in', () => {
+
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon
           .stub(helpers, 'getUser')
           .returns({ id: 1, Followings: [], role: 'admin' })
+        
         await db.User.create({})
         await db.User.create({})
         await db.Tweet.create({ UserId: 2, description: 'Tweet1' })

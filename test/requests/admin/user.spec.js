@@ -11,6 +11,7 @@ const db = require('../../../models')
 describe('# Admin::User request', () => {
   context('go to admin user page', () => {
     describe('if normal user log in', () => {
+
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })

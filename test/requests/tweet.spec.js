@@ -29,6 +29,7 @@ describe('# tweet request', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
+
         await db.User.create({})
         await db.Tweet.create({ UserId: 1, description: 'User1 的 Tweet1' })
         await db.Tweet.create({ UserId: 1, description: 'User1 的 Tweet2' })
@@ -111,6 +112,7 @@ describe('# tweet request', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
+
         await db.User.create({})
       })
       it('will redirect to index', done => {
@@ -147,6 +149,7 @@ describe('# tweet request', () => {
       before(async () => {
         this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
         this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
+
         await db.User.create({})
         await db.Tweet.create({ UserId: 1 })
       })
@@ -154,6 +157,7 @@ describe('# tweet request', () => {
       it('will redirect index', done => {
         request(app)
           .post('/tweets/1/like') // #1 likes => like
+
           .set('Accept', 'application/json')
           .expect(302)
           .end(function(err, res) {
@@ -180,12 +184,18 @@ describe('# tweet request', () => {
 
   context('# unlike', () => {
     describe('like first tweet', () => {
-      before(async () => {
-        this.ensureAuthenticated = sinon.stub(helpers, 'ensureAuthenticated').returns(true)
-        this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, Followings: [] })
+
+      before(async() => {
+        
+        this.ensureAuthenticated = sinon.stub(
+          helpers, 'ensureAuthenticated'
+        ).returns(true);
+        this.getUser = sinon.stub(
+          helpers, 'getUser'
+        ).returns({id: 1, Followings: []});
         await db.User.create({})
-        await db.Tweet.create({ UserId: 1 })
-        await db.Like.create({ UserId: 1, TweetId: 1 })
+        await db.Tweet.create({UserId: 1, description: 'test'})
+        await db.Like.create({UserId: 1, TweetId: 1})
       })
 
       it('will redirect index', done => {
