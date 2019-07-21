@@ -39,18 +39,39 @@
               </div>
             </div>
             <div class="row col-12 col-md-12 mt-2">
-              <a class="col-6 col-md-3 text-info font-weight-bolder" href="/tweets/{{this.id}}/replies">
-                Reply({{this.Replies.length}})
-              </a>
+              <div class="col-6 col-md-4 col-lg-3 text-info" data-reply="open">
+                <i class="fas fa-caret-right fa-lg"></i>&nbsp;<i
+                  class="far fa-comment"></i>&nbsp;Reply{{this.Replies.length}}
+              </div>
               <div class="col-6 col-md-3 text-danger font-weight-bolder">
                 Like({{this.Likes.length}})
               </div>
-              <div class="col-12 col-md-6 mx-0 px-0 text-secondary text-muted"> ---
+              <div class="col-12 col-md-12 mx-0 px-0 text-secondary text-muted text-right"> ---
                 {{moment this.createdAt}}
               </div>
             </div>
-          </div>
 
+            <div class="col-12 col-md-12 mt-3 tweet-reply d-none">
+              {{#each this.Replies}}
+              <div class="row col-12 col-md-12 mt-1">
+                <div class="col-2 col-md-1">
+                  <a href="/users/{{this.User.id}}/tweets">
+                    <img src="{{this.User.avatar}}" alt="使用者照片" class="rounded m-auto"
+                      style="max-height:30px;max-width:30px">
+                  </a>
+                </div>
+                <div class="col-6 col-md-3">
+                  <a href="/users/{{this.User.id}}/tweets">
+                    @{{this.User.name}}
+                  </a>
+                </div>
+                <div class="col-12 col-md-8">
+                  <p>{{this.comment}}</p>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -80,3 +101,24 @@
     </ul>
   </nav>
 </div> --}}
+
+
+<script>
+  const open = document.querySelectorAll('[data-reply="open"]')
+  open.forEach(a => {
+
+    a.addEventListener('click', () => {
+      const arrow = a.firstElementChild
+
+      if (arrow.classList.contains('fa-caret-right')) {
+        arrow.classList.replace('fa-caret-right', 'fa-caret-down')
+      } else {
+        arrow.classList.replace('fa-caret-down', 'fa-caret-right')
+      }
+
+      const replyData = a.parentElement.nextElementSibling
+      replyData.classList.toggle('d-block');
+    })
+
+  })
+</script>
