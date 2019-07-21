@@ -14,7 +14,7 @@ const adminController = {
     // }
 
     Tweet.findAndCountAll({
-      include: [User, Like, Reply]
+      include: [User, Like, { model: Reply, include: [User] }]
       // offset: offset,
       // limit: pageLimit
     }).then(result => {
